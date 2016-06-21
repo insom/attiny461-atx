@@ -1,6 +1,8 @@
 attiny461-atx
 =============
 
+**This branch is the ATtiny 85 version**
+
 This is a simple project, originally started from [Markus Konrad's ATtiny instructable][i], to emulate the semantics of the ATX power button:
 
 * If the power is off, turn it on when the button is pressed.
