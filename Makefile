@@ -3,9 +3,9 @@
 # Originally by Marcus Konrad, BSD3 Licensed
 #
 
-DEVICE     = attiny461
+DEVICE     = attiny85
 CLOCK      = 1000000
-PROGRAMMER = -c buspirate -b 115200 -P /dev/ttyUSB0
+PROGRAMMER = -c usbasp -B 1000
 OBJECTS    = main.o
 FUSES      = -U lfuse:w:0x62:m -U hfuse:w:0xdf:m -U efuse:w:0xff:m
 
