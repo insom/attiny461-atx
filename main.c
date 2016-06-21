@@ -2,9 +2,9 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-#define PIN_LED1 PB5
-#define PIN_BUTTON1 PA0
-#define PIN_BUTTON1_MASK (1 << PA0)
+#define PIN_LED1 PB4
+#define PIN_BUTTON1 PB3
+#define PIN_BUTTON1_MASK (1 << PB3)
 
 uint8_t toggle = 0;
 uint8_t c = 0;
@@ -14,21 +14,21 @@ uint8_t a = 0;
 
 ISR(TIMER0_OVF_vect) {
     if (debounce == 1) {
-        if((PINA & PIN_BUTTON1_MASK) == 1) {
+        if((PINB & PIN_BUTTON1_MASK) > 0) {
             debounce = 0;
         } else {
             goto end;
         }
     }
     if (power == 0) {
-        if((PINA & PIN_BUTTON1_MASK) == 0) {
+        if((PINB & PIN_BUTTON1_MASK) == 0) {
             // Power up!
             power = 1;
-            PORTB = 1<<PIN_LED1;
+            PORTB |= 1<<PIN_LED1;
         }
     } else {
         // Count up consecutive periods that the button was held low.
-        if((PINA & PIN_BUTTON1_MASK) == 0) {
+        if((PINB & PIN_BUTTON1_MASK) == 0) {
             c++;
         } else {
             c = 0;
@@ -37,7 +37,7 @@ ISR(TIMER0_OVF_vect) {
             // Power down!
             power = 0;
             debounce = 1;
-            PORTB = 0;
+            PORTB = (1 << PIN_BUTTON1); // Default state
         }
     }
 end:
@@ -46,8 +46,7 @@ end:
 
 int main(void) {
     DDRB = (1 << PIN_LED1); // Output.
-    DDRA = 0; // All inputs.
-    PORTA = (1 << PIN_BUTTON1); // Enable pull up.
+    PORTB = (1 << PIN_BUTTON1); // Enable pull up.
 
     // Timer registers
     TCCR0A = 0;
