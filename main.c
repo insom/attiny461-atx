@@ -12,6 +12,9 @@ uint8_t power = 0;
 uint8_t debounce = 0;
 uint8_t a = 0;
 
+#define OFF_STATE (1 << PIN_BUTTON1) | (1 << PIN_LED1)
+#define ON_STATE (1 << PIN_BUTTON1)
+
 ISR(TIMER0_OVF_vect) {
     if (debounce == 1) {
         if((PINB & PIN_BUTTON1_MASK) > 0) {
@@ -24,7 +27,7 @@ ISR(TIMER0_OVF_vect) {
         if((PINB & PIN_BUTTON1_MASK) == 0) {
             // Power up!
             power = 1;
-            PORTB |= 1<<PIN_LED1;
+            PORTB = ON_STATE;
         }
     } else {
         // Count up consecutive periods that the button was held low.
@@ -37,7 +40,7 @@ ISR(TIMER0_OVF_vect) {
             // Power down!
             power = 0;
             debounce = 1;
-            PORTB = (1 << PIN_BUTTON1); // Default state
+            PORTB = OFF_STATE; // Default state
         }
     }
 end:
@@ -45,8 +48,8 @@ end:
 }
 
 int main(void) {
+    PORTB = OFF_STATE; // Enable pull up.
     DDRB = (1 << PIN_LED1); // Output.
-    PORTB = (1 << PIN_BUTTON1); // Enable pull up.
 
     // Timer registers
     TCCR0A = 0;
